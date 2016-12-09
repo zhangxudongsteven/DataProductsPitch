@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Time Series Analysis on HR Data</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Time Series Analysis on HR Data">
+  <meta name="author" content="Steven Zhang">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  <link rel=stylesheet href="libraries/widgets/bootstrap/css/bootstrap.css"></link>
+<link rel=stylesheet href="./assets/css/ribbons.css"></link>
+
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <aside class="gdbar">
+    <img src="assets/img/logo.jpg">
+  </aside>
+  <hgroup class="auto-fadein">
+    <h1>Time Series Analysis on HR Data</h1>
+    <h2>Assignment of Data Products Course on Coursera</h2>
+    <p>Steven Zhang<br/>Reproducible Pitch Presentation</p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Summary</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>This analysis aims to perform time series analysis on human resouce data. </p>
+
+<p>This data was made up by a data analyst, in order to use in a HTML5 Dashboard Building.
+During the building, the data will follow the following 7 basic principles:</p>
+
+<ul>
+<li>Use a normal distribution with a gradual increase trend to make up data.</li>
+<li>Generally, each year will have 7% increasement.</li>
+<li>The standard deviation will be one-tenth the mean.</li>
+<li>The 6 departments are named A to F, and their member are 100 to 600.</li>
+<li>For a larger department, their figures will be lower. To be specific, with 100 more members, there will be 0.5% drop in all figures, which based on 100 members with 100% ratio.</li>
+<li>For each month, there will be a standerd fluctuation.</li>
+<li>The final figure should be influenced by a random ratio, which follow a N~(1,0.07) distribution.</li>
+</ul>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-2" style="background:;">
+  <hgroup>
+    <h2>Data Description</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>A data frame with <strong>648</strong> observations on <strong>4</strong> dimensions and <strong>6</strong> measures</p>
+
+<table><thead>
+<tr>
+<th>Index</th>
+<th>Name</th>
+<th>Description</th>
+<th>Type</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>[, 1]</td>
+<td>year</td>
+<td>Year (2008 - 2016)</td>
+<td>Dimension</td>
+</tr>
+<tr>
+<td>[, 2]</td>
+<td>quarter</td>
+<td>Quarter (Q1, Q2, Q3, Q4)</td>
+<td>Dimension</td>
+</tr>
+<tr>
+<td>[, 3]</td>
+<td>month</td>
+<td>Month (1 - 12)</td>
+<td>Dimension</td>
+</tr>
+<tr>
+<td>[, 4]</td>
+<td>department</td>
+<td>department 6 Department (A - F)</td>
+<td>Dimension</td>
+</tr>
+<tr>
+<td>[, 5]</td>
+<td>CapitaIncome</td>
+<td>Total Amount of Capita Income</td>
+<td>Measure</td>
+</tr>
+<tr>
+<td>[, 6]</td>
+<td>Profitability</td>
+<td>Total Amount of Profit</td>
+<td>Measure</td>
+</tr>
+<tr>
+<td>[, 7]</td>
+<td>NetProfit</td>
+<td>Total Amount of Net Profit</td>
+<td>Measure</td>
+</tr>
+<tr>
+<td>[, 8]</td>
+<td>LaborCost</td>
+<td>Total Amount of Labor Cost</td>
+<td>Measure</td>
+</tr>
+<tr>
+<td>[, 9]</td>
+<td>LaborCostProfitRatio</td>
+<td>Average of Labor Cost</td>
+<td>Measure</td>
+</tr>
+<tr>
+<td>[,10]</td>
+<td>ReturnOnHumanCapital</td>
+<td>Average Return on Human Capital</td>
+<td>Measure</td>
+</tr>
+</tbody></table>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-3" style="background:;">
+  <hgroup>
+    <h2>Core Code</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Due to the size, here is the very core code of my Shiny App.</p>
+
+<pre><code>ts1 &lt;- ts(finalColumn, frequency = 4, start = c(2008, 1))
+plot(decompose(ts1), xlab = &quot;Year+1&quot;) # This plot is the second tab in Shiny App
+ts1Train &lt;- window(ts1, start = 2008, end = 2012)
+ts1Test &lt;- window(ts1, start = 2012, end = 2017)
+ets1 &lt;- ets(ts1Train, model = &quot;MMM&quot;)
+fcast &lt;- forecast(ets1)
+plot(fcast) # This plot comes first in UI
+lines(ts1Test, col = &quot;red&quot;)
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="" id="slide-4" style="background:;">
+  <hgroup>
+    <h2>Online Resources</h2>
+  </hgroup>
+  <article data-timings="">
+    
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Summary'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='Data Description'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='Core Code'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='Online Resources'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  <script src="libraries/widgets/bootstrap/js/bootstrap.min.js"></script>
+<script src="libraries/widgets/bootstrap/js/bootbox.min.js"></script>
+
+  <script>  
+  $(function (){ 
+    $("#example").popover(); 
+    $("[rel='tooltip']").tooltip(); 
+  });  
+  </script>  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
