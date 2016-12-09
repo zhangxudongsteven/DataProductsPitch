@@ -49,7 +49,7 @@ A data frame with **648** observations on **4** dimensions and **6** measures
 
 ## Core Code
 
-Due to the size, here is the very core code of my Shiny App.
+Due to the length, here is the very core code of my Shiny App.
 
 ```
 ts1 <- ts(finalColumn, frequency = 4, start = c(2008, 1))
@@ -66,4 +66,8 @@ lines(ts1Test, col = "red")
 
 ## Online Resources
 
+You can visit the Shiny App on Shiny Cloud with this [link](https://zexd.shinyapps.io/DataProductAssignment/)
 
+You can access the shiny app code with this [Github Repo link](https://github.com/zhangxudongsteven/DataProductAssignment/)
+
+You can find the data building process with this [link](https://zhangxudongsteven.github.io/DataProductAssignment/www/data_generating.html)
